@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.LFSoftware.BroAvaliacao.Exceções.AcessoNegadoException;
-import com.LFSoftware.BroAvaliacao.Exceções.AusendiaDadosException;
-import com.LFSoftware.BroAvaliacao.Exceções.CadastroNedadoException;
-import com.LFSoftware.BroAvaliacao.Exceções.EntidadeNaoEncontradaException;
+import com.LFSoftware.BroAvaliacao.Excecoes.AcessoNegadoException;
+import com.LFSoftware.BroAvaliacao.Excecoes.AusendiaDadosException;
+import com.LFSoftware.BroAvaliacao.Excecoes.CadastroNedadoException;
+import com.LFSoftware.BroAvaliacao.Excecoes.EntidadeNaoEncontradaException;
 
 import jakarta.servlet.http.HttpServletRequest;
 

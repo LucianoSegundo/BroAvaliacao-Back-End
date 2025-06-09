@@ -16,10 +16,10 @@ import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginResponse;
 import com.LFSoftware.BroAvaliacao.Entidade.Configuracao;
 import com.LFSoftware.BroAvaliacao.Entidade.Papel;
 import com.LFSoftware.BroAvaliacao.Entidade.Usuario;
-import com.LFSoftware.BroAvaliacao.Exceções.AcessoNegadoException;
-import com.LFSoftware.BroAvaliacao.Exceções.AusendiaDadosException;
-import com.LFSoftware.BroAvaliacao.Exceções.CadastroNedadoException;
-import com.LFSoftware.BroAvaliacao.Exceções.EntidadeNaoEncontradaException;
+import com.LFSoftware.BroAvaliacao.Excecoes.AcessoNegadoException;
+import com.LFSoftware.BroAvaliacao.Excecoes.AusendiaDadosException;
+import com.LFSoftware.BroAvaliacao.Excecoes.CadastroNedadoException;
+import com.LFSoftware.BroAvaliacao.Excecoes.EntidadeNaoEncontradaException;
 import com.LFSoftware.BroAvaliacao.Repositorio.PapelRepository;
 import com.LFSoftware.BroAvaliacao.Repositorio.UsuarioRepository;
 

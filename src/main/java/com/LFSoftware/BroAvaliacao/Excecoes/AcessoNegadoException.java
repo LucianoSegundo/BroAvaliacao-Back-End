@@ -1,4 +1,4 @@
-package com.LFSoftware.BroAvaliacao.Exceções;
+package com.LFSoftware.BroAvaliacao.Excecoes;
 
 public class AcessoNegadoException extends RuntimeException {
 	public AcessoNegadoException(String mensagem) {
