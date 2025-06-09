@@ -1,6 +1,8 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -8,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -36,8 +39,13 @@ public class Usuario {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Comentario> comentarios;
     
+	@ManyToMany(mappedBy = "usuarios")
+	Set<Papel> Papeis;
+	
     public Usuario() {
     	super();
+    	
+    	this.Papeis = new HashSet<Papel>();
     }
 
 	public Long getId() {
@@ -102,6 +110,14 @@ public class Usuario {
 
 	public void setComentarios(List<Comentario> comentarios) {
 		this.comentarios = comentarios;
+	}
+
+	public Set<Papel> getPapeis() {
+		return Papeis;
+	}
+
+	public void setPapeis(Set<Papel> papeis) {
+		Papeis = papeis;
 	}
     
     

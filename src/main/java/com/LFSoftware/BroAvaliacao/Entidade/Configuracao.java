@@ -17,6 +17,8 @@ public class Configuracao {
     
 	public Configuracao() {
 		super();
+		this.notificar = true;
+		this.notificarPorEmail = true;
 	}
 
 	public Long getId() {
