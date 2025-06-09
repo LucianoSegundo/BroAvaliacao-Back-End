@@ -1,4 +1,4 @@
-package com.LFSoftware.BroAvaliacao.Serviços;
+package com.LFSoftware.BroAvaliacao.Servicos;
 
 import java.time.Instant;
 import java.util.stream.Collectors;

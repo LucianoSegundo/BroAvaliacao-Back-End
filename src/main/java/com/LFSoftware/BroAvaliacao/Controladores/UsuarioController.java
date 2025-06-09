@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.CadastroRequest;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginRequest;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginResponse;
-import com.LFSoftware.BroAvaliacao.Serviços.UsuarioService;
+import com.LFSoftware.BroAvaliacao.Servicos.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
