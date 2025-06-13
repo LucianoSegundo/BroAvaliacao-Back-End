@@ -1,5 +1,6 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -19,6 +20,7 @@ public class Comentario {
 
     private String mensagem;
     private long numeroComentarios;
+    private LocalDateTime criacao;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "comentario_pai_id")
@@ -58,6 +60,14 @@ public class Comentario {
 
 	public void setComentarios(List<Comentario> comentarios) {
 		this.comentarios = comentarios;
+	}
+
+	public LocalDateTime getCriacao() {
+		return criacao;
+	}
+
+	public void setCriacao(LocalDateTime criacao) {
+		this.criacao = criacao;
 	}
     
     

@@ -20,6 +20,12 @@ public class Restaurante {
     private Long id;
 
     private String nome;
+    
+    private String Abertura;
+    
+    private String fechamento;
+    
+    private Boolean temProprietario;
 
     @ManyToOne
     @JoinColumn(name = "proprietario_id")
@@ -84,6 +90,30 @@ public class Restaurante {
 
 	public void setResenhas(List<Resenha> resenhas) {
 		this.resenhas = resenhas;
+	}
+
+	public String getAbertura() {
+		return Abertura;
+	}
+
+	public void setAbertura(String abertura) {
+		Abertura = abertura;
+	}
+
+	public String getFechamento() {
+		return fechamento;
+	}
+
+	public void setFechamento(String fechamento) {
+		this.fechamento = fechamento;
+	}
+
+	public Boolean getTemProprietario() {
+		return temProprietario;
+	}
+
+	public void setTemProprietario(Boolean temProprietario) {
+		this.temProprietario = temProprietario;
 	}
     
     
