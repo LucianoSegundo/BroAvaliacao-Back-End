@@ -10,4 +10,6 @@ public interface LogRepository extends JpaRepository<LogAtualizacao, Long> {
 
 	Page<LogAtualizacao> findAllByLocalRestaurante_Id(Long restauranteId, PageRequest request);
 
+	Page<LogAtualizacao> findAllByLocalItem_Id(Long restauranteId, PageRequest request);
+
 }

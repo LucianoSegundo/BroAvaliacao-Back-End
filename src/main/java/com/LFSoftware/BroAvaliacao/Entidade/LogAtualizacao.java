@@ -2,7 +2,6 @@ package com.LFSoftware.BroAvaliacao.Entidade;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -30,50 +29,66 @@ public class LogAtualizacao {
 	private Usuario autor;
 
 	@ManyToOne
-	private Restaurante localRestaurante;
+	private Item localItem;
 
 	@ManyToOne
-	private Item localItem;
+	private Restaurante localRestaurante;
 
 	@OneToMany(mappedBy = "logVinculado", cascade = CascadeType.ALL)
 	private List<RepresentacaoModificacao> ListaModificacoes;
 
+	private Long categoriaAtualizacao;
+
+	private String justificativaAlualizacao;
+
 	private LocalDateTime dataCriacao;
 
-	private Long tipoAtualizacao;
+	// private Long posicao; // atributo suspenso devido posibilidade de remoção
 
 	public LogAtualizacao() {
 	}
 
-	public LogAtualizacao(Usuario autor, Item localItem, Long tipo) {
-		this.localItem = localItem;
-		this.autor = autor;
-		this.dataCriacao = LocalDateTime.now();
-
-		if (tipo > 4 || tipo < 1)
-			throw new ErroGeracaoRetorno("Tipo de atualização não reconhecido.");
-		this.tipoAtualizacao = tipo;
-
-	}
-
-	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, Long tipo) {
-		this.dataCriacao = LocalDateTime.now();
-		this.autor = autor;
+	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, Long categoria) {
 		this.localRestaurante = localRestaurante;
 
-		if (tipo > 4 || tipo < 1)
+		inicializar(autor, categoria);
+	}
+
+	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, Long categoria,
+			String justificativaAlualizacao) {
+		this.localRestaurante = localRestaurante;
+		this.justificativaAlualizacao = justificativaAlualizacao;
+
+		inicializar(autor, categoria);
+	}
+
+	public LogAtualizacao(Usuario autor, Item localItem, Long categoria) {
+		this.localItem = localItem;
+
+		inicializar(autor, categoria);
+	}
+
+	public LogAtualizacao(Usuario autor, Item localItem, Long categoria, String justificativaAlualizacao) {
+		this.localItem = localItem;
+		this.justificativaAlualizacao = justificativaAlualizacao;
+
+		inicializar(autor, categoria);
+	}
+
+	private void inicializar(Usuario autor, Long categoria) {
+		this.autor = autor;
+		this.dataCriacao = LocalDateTime.now();
+
+		if (categoria > 4 || categoria < 1)
 			throw new ErroGeracaoRetorno("Tipo de atualização não reconhecido.");
-		this.tipoAtualizacao = tipo;
-
-		System.out.println(gerarMensagem());
-
+		this.categoriaAtualizacao = categoria;
 	}
 
 	public String gerarMensagem() {
 
 		String mensagem = "";
 
-		if (tipoAtualizacao > 4 || tipoAtualizacao < 1)
+		if (categoriaAtualizacao > 4 || categoriaAtualizacao < 1)
 			throw new ErroGeracaoRetorno("Falha ao montar o Log, tipode atualização não encontrado");
 
 		if (localRestaurante != null) {
@@ -81,27 +96,28 @@ public class LogAtualizacao {
 			mensagem = "O Restaurante ";
 			mensagem += localRestaurante.getNome();
 
-			if (tipoAtualizacao == 1)
+			if (categoriaAtualizacao == 1)
 				mensagem += TipoAtualizacao.criacaoR.getTipo();
-			else if (tipoAtualizacao == 2)
+			else if (categoriaAtualizacao == 2)
 				mensagem += TipoAtualizacao.atualizacao.getTipo();
-			else if (tipoAtualizacao == 3)
+			else if (categoriaAtualizacao == 3)
 				mensagem += TipoAtualizacao.delecao.getTipo();
-			else if (tipoAtualizacao == 4)
-				mensagem = "Os dados do Restaurante "+ localRestaurante.getNome() +" "+ TipoAtualizacao.edicao.getTipo();
+			else if (categoriaAtualizacao == 4)
+				mensagem = "Os dados do Restaurante " + localRestaurante.getNome() + " "
+						+ TipoAtualizacao.edicao.getTipo();
 
 		} else if (localItem != null) {
 
 			mensagem = "O Item ";
 			mensagem += localItem.getNome();
 
-			if (tipoAtualizacao == 1)
+			if (categoriaAtualizacao == 1)
 				mensagem += TipoAtualizacao.criacaoR.getTipo();
-			else if (tipoAtualizacao == 2)
+			else if (categoriaAtualizacao == 2)
 				mensagem += TipoAtualizacao.atualizacao.getTipo();
-			else if (tipoAtualizacao == 3)
+			else if (categoriaAtualizacao == 3)
 				mensagem += TipoAtualizacao.delecao.getTipo();
-			else if (tipoAtualizacao == 4)
+			else if (categoriaAtualizacao == 4)
 				mensagem = "Os dados do Item" + TipoAtualizacao.edicao.getTipo();
 
 		} else
@@ -137,6 +153,30 @@ public class LogAtualizacao {
 		return dataCriacao.format(formatador);
 
 	}
+
+//	@Transactional(readOnly = true)
+//	private void definirPosisao( Long idAlvo, LogRepository repo) {
+//		// Objetivo desse metodo é criar uma ordenação entre as diferentes categorias de log para um certo alvo, por exemplo definir que este é a quarta vez que o item foi modificado.
+//		//  O metodo está implementado, contudo não é utulizado, pois ainda é questionavel se ela abordagem será util ou não. adição feita em 24/ junho 2025 as 16:16 horas.
+//	
+//		List<LogAtualizacao> historicoTipo;
+//		if(localRestaurante != null && localItem == null) {
+//			
+//			historicoTipo = repo.findAllByLocalRestaurante_IdAndTipoAtualizacao(idAlvo, tipoAtualizacao);
+//			long tamanho = historicoTipo.size();
+//			
+//			if(tamanho == 0) this.posicao = 1l;
+//			else this.posicao = tamanho+1;
+//		}
+//		
+//		else if(localItem != null && localRestaurante == null) {
+//			historicoTipo = repo.findAllByLocalItemAndTipoAtualizacao(idAlvo, tipoAtualizacao);
+//			long tamanho = historicoTipo.size();
+//			
+//			if(tamanho == 0) this.posicao = 1l;
+//			else this.posicao = tamanho+1;
+//		}
+//	}
 
 	public LogResponse toResponse() {
 		List<ModificacoesResponse> modificacao = ListaModificacoes.stream().map(x -> x.toResponse())
@@ -185,12 +225,12 @@ public class LogAtualizacao {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public Long getTipoAtualizacao() {
-		return tipoAtualizacao;
+	public Long getCategoriaAtualizacao() {
+		return categoriaAtualizacao;
 	}
 
-	public void setTipoAtualizacao(Long tipoAtualizacao) {
-		this.tipoAtualizacao = tipoAtualizacao;
+	public void setCategoriaAtualizacao(Long categoriaAtualizacao) {
+		this.categoriaAtualizacao = categoriaAtualizacao;
 	}
 
 	public List<RepresentacaoModificacao> getListaModificacoes() {
@@ -200,4 +240,20 @@ public class LogAtualizacao {
 	public void setListaModificacoes(List<RepresentacaoModificacao> listaModificacoes) {
 		ListaModificacoes = listaModificacoes;
 	}
+
+	public String getJustificativaAlualizacao() {
+		return justificativaAlualizacao;
+	}
+
+	public void setJustificativaAlualizacao(String justificativaAlualizacao) {
+		this.justificativaAlualizacao = justificativaAlualizacao;
+	}
+
+//	public Long getPosicao() {
+//		return posicao;
+//	}
+//
+//	public void setPosicao(Long posicao) {
+//		this.posicao = posicao;
+//	}
 }

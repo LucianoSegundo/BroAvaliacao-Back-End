@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.LogResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteAlteradoDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteResponse;
 import com.LFSoftware.BroAvaliacao.Entidade.LogAtualizacao;
@@ -36,6 +37,7 @@ public class RestauranteService {
 	@Transactional
 	public RestauranteResponse criar(long usuarioID, RestauranteDTO dadosRequeridos) {
 
+		// verificando se os atributos são validos
 		if (dadosRequeridos.nome() == null || dadosRequeridos.nome().isBlank())
 			throw new AusendiaDadosException("Nome não pode ser nulo.");
 		if (dadosRequeridos.Abertura() == null)
@@ -43,6 +45,7 @@ public class RestauranteService {
 		if (dadosRequeridos.fechamento() == null)
 			throw new AusendiaDadosException("Horario de fechamento não pode ser nula.");
 
+		// montando as entidades necessárias para a persistencia.
 		Usuario usuario = usuarioRepo.findById(usuarioID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
 
@@ -60,7 +63,13 @@ public class RestauranteService {
 	}
 
 	@Transactional
-	public void deletar(Long restauID, long usuarioID) {
+	public void deletar(Long restauID, long usuarioID, String justificativa) {
+
+		
+		if (justificativa == null || justificativa.isBlank())
+			throw new AcessoNegadoException("justificativa para a exclusão não pode ser nula.");
+
+		// resgatando as entidades envolvidas;
 
 		Usuario usuario = usuarioRepo.findById(usuarioID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
@@ -70,9 +79,11 @@ public class RestauranteService {
 		if (restaurante.getDelecaoLogica() == true)
 			throw new AcessoNegadoException("Restaurante já foi deletado.");
 
+		// definindo logicamente a exclusão do item como verdadeira e fazendo a
+		// persistencia das alterações.
 		restaurante.setDelecaoLogica(true);
 
-		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 3l);
+		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 3l, justificativa);
 
 		usuario.getHistoricoInteracoes().add(log);
 		restaurante.getHistoricoInteracoes().add(log);
@@ -82,7 +93,10 @@ public class RestauranteService {
 	}
 
 	@Transactional
-	public RestauranteResponse editar(Long restauID, long usuarioID, RestauranteDTO dadosRequeridos) {
+	public RestauranteResponse editar(Long restauID, long usuarioID, RestauranteAlteradoDTO dadosRequeridos ) {
+
+		if (dadosRequeridos.justificativa() == null || dadosRequeridos.justificativa().isBlank())
+			throw new AcessoNegadoException("justificativa para a edição não pode ser nula.");
 
 		Boolean editado = false;
 
@@ -91,6 +105,8 @@ public class RestauranteService {
 		Restaurante restaurante = repositorio.findById(restauID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Restaurante não encontrado."));
 
+		// verificando se houve modificações e preparando as informações necessarias
+		// para a persistencia.
 		if (dadosRequeridos.nome() != null && dadosRequeridos.nome().isBlank() == false) {
 			if (restaurante.getNome().equals(dadosRequeridos.nome()) == false) {
 
@@ -126,13 +142,14 @@ public class RestauranteService {
 			}
 		}
 
+		// fazendo a persistencia somente se houve modificações.
 		if (editado == false)
 			throw new AcessoNegadoException("Nenhum atributo foi modificado");
 
 		Usuario usuario = usuarioRepo.findById(usuarioID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
 
-		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 4l);
+		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 4l, dadosRequeridos.justificativa());
 
 		modificacoes.forEach(x -> x.setLogVinculado(log));
 		log.setListaModificacoes(modificacoes);

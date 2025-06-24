@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.LogResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteAlteradoDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteResponse;
 import com.LFSoftware.BroAvaliacao.Servicos.RestauranteService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
@@ -48,9 +50,10 @@ public class RestauranteController {
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante, então não pode exclui-lo.")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
 	@DeleteMapping(value = "/deletar/{restauID}")
-	public ResponseEntity<Void> deletar(JwtAuthenticationToken token, @PathVariable Long restauID) {
+	public ResponseEntity<Void> deletar(JwtAuthenticationToken token, @PathVariable Long restauID,
+			@RequestBody @Schema(type = "string", example = "texto justificando a ação tomada.") String justificativa) {
 
-		service.deletar(restauID, Long.parseLong(token.getName()));
+		service.deletar(restauID, Long.parseLong(token.getName()), justificativa);
 
 		return null;
 	}
@@ -61,7 +64,7 @@ public class RestauranteController {
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
 	@PutMapping(value = "/editar/{restauID}")
 	public ResponseEntity<RestauranteResponse> editar(JwtAuthenticationToken token,
-			@RequestBody RestauranteDTO dadosRequeridos, @PathVariable Long restauID) {
+			@RequestBody RestauranteAlteradoDTO dadosRequeridos, @PathVariable Long restauID) {
 
 		RestauranteResponse resposta = service.editar(restauID, Long.parseLong(token.getName()), dadosRequeridos);
 		return ResponseEntity.ok(resposta);
@@ -82,7 +85,7 @@ public class RestauranteController {
 		Page<RestauranteResponse> resposta = service.listar(request);
 		return ResponseEntity.ok(resposta);
 	}
-	
+
 	@Operation(summary = "Listar restaurantes", description = "Retorna uma lista paginada de restaurantes.")
 	@ApiResponse(responseCode = "200", description = "operação bem sucedida")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
@@ -91,12 +94,11 @@ public class RestauranteController {
 			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas,
 			@RequestParam(value = "ordarPor", defaultValue = "dataCriacao") String ordarPor,
-			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem,
-			JwtAuthenticationToken token,
+			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem, JwtAuthenticationToken token,
 			@PathVariable Long restauID) {
 		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
-		Page<LogResponse> resposta = service.retornarLogRestauranteS(restauID,request);
+		Page<LogResponse> resposta = service.retornarLogRestauranteS(restauID, request);
 		return ResponseEntity.ok(resposta);
 	}
 

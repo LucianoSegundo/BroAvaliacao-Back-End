@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record RestauranteDTO(String nome, 
+public  record RestauranteAlteradoDTO(String nome, 
 		   @Schema(
 			        type = "string",
 			        format = "time",
@@ -20,7 +20,12 @@ public record RestauranteDTO(String nome,
 			        description = "Horário de fechamento (formato HH:mm:ss)",
 			        example = "08:30:00"
 			    )
-		@JsonFormat(pattern = "HH:mm:ss") LocalTime fechamento) {
+		@JsonFormat(pattern = "HH:mm:ss") LocalTime fechamento,
+		   @Schema(
+			        type = "string",
+			        format = "time",
+			        description = "justificativa para a edicão dos dados do restaurante.",    
+			        example = "texto justificando a ação tomada."  )
+					String justificativa) {
 
 }
-
