@@ -1,14 +1,16 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteResponse;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -21,15 +23,11 @@ public class Restaurante {
 
     private String nome;
     
-    private String Abertura;
+    private LocalTime Abertura;
     
-    private String fechamento;
+    private LocalTime fechamento;
     
-    private Boolean temProprietario;
-
-    @ManyToOne
-    @JoinColumn(name = "proprietario_id")
-    private Usuario proprietario;
+    private Boolean delecaoLogica;
 
     @OneToOne(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private Endereco endereco;
@@ -40,8 +38,17 @@ public class Restaurante {
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private List<Resenha> resenhas;
 
+    @OneToMany(mappedBy = "localRestaurante", cascade = CascadeType.PERSIST)
+	private List<LogAtualizacao> historicoInteracoes; 
+    
 	public Restaurante() {
 		super();
+		this.historicoInteracoes = new ArrayList<LogAtualizacao>();
+		this.setDelecaoLogica(false);
+	}
+	
+	public RestauranteResponse toResponse() {
+		return new RestauranteResponse(id, nome, Abertura.toString(), fechamento.toString());
 	}
 
 	public Long getId() {
@@ -58,14 +65,6 @@ public class Restaurante {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public Usuario getProprietario() {
-		return proprietario;
-	}
-
-	public void setProprietario(Usuario proprietario) {
-		this.proprietario = proprietario;
 	}
 
 	public Endereco getEndereco() {
@@ -92,28 +91,36 @@ public class Restaurante {
 		this.resenhas = resenhas;
 	}
 
-	public String getAbertura() {
+	public LocalTime getAbertura() {
 		return Abertura;
 	}
 
-	public void setAbertura(String abertura) {
+	public void setAbertura(LocalTime abertura) {
 		Abertura = abertura;
 	}
 
-	public String getFechamento() {
+	public LocalTime getFechamento() {
 		return fechamento;
 	}
 
-	public void setFechamento(String fechamento) {
+	public void setFechamento(LocalTime fechamento) {
 		this.fechamento = fechamento;
 	}
 
-	public Boolean getTemProprietario() {
-		return temProprietario;
+	public List<LogAtualizacao> getHistoricoInteracoes() {
+		return historicoInteracoes;
 	}
 
-	public void setTemProprietario(Boolean temProprietario) {
-		this.temProprietario = temProprietario;
+	public void setHistoricoInteracoes(List<LogAtualizacao> historicoInteracoes) {
+		this.historicoInteracoes = historicoInteracoes;
+	}
+
+	public Boolean getDelecaoLogica() {
+		return delecaoLogica;
+	}
+
+	public void setDelecaoLogica(Boolean delecaoLogica) {
+		this.delecaoLogica = delecaoLogica;
 	}
     
     

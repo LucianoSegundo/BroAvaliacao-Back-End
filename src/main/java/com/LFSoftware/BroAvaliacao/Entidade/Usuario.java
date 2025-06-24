@@ -29,7 +29,6 @@ public class Usuario {
     private List<Resenha> resenhas;
 
     @OneToOne(cascade = CascadeType.ALL)
-    
     @JoinColumn(name = "configuracoes_id")
     private Configuracao configuracoes;
 
@@ -38,6 +37,9 @@ public class Usuario {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Comentario> comentarios;
+    
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.PERSIST)
+	private List<LogAtualizacao> historicoInteracoes; 
     
 	@ManyToMany(mappedBy = "usuarios")
 	Set<Papel> Papeis;
@@ -118,6 +120,14 @@ public class Usuario {
 
 	public void setPapeis(Set<Papel> papeis) {
 		Papeis = papeis;
+	}
+
+	public List<LogAtualizacao> getHistoricoInteracoes() {
+		return historicoInteracoes;
+	}
+
+	public void setHistoricoInteracoes(List<LogAtualizacao> historicoInteracoes) {
+		this.historicoInteracoes = historicoInteracoes;
 	}
     
     

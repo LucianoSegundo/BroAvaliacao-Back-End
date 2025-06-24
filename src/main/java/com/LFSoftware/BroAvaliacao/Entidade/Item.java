@@ -28,6 +28,9 @@ public class Item {
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
 
+    @OneToMany(mappedBy = "localItem", cascade = CascadeType.PERSIST)
+	private List<LogAtualizacao> historicoInteracoes; 
+	
 	public Item() {
 		super();
 	}
@@ -70,6 +73,14 @@ public class Item {
 
 	public void setRestaurante(Restaurante restaurante) {
 		this.restaurante = restaurante;
+	}
+
+	public List<LogAtualizacao> getHistoricoInteracoes() {
+		return historicoInteracoes;
+	}
+
+	public void setHistoricoInteracoes(List<LogAtualizacao> historicoInteracoes) {
+		this.historicoInteracoes = historicoInteracoes;
 	}
     
     
