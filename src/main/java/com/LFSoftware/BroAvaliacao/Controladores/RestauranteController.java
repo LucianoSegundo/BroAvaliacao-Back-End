@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LogResponse;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteAlteradoDTO;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteDTO;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.RestauranteAlteradoDTO;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.RestauranteDTO;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LogResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.RestauranteResponse;
 import com.LFSoftware.BroAvaliacao.Servicos.RestauranteService;
 
 import io.swagger.v3.oas.annotations.Operation;

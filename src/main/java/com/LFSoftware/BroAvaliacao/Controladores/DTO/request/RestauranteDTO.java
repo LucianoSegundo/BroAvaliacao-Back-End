@@ -1,4 +1,4 @@
-package com.LFSoftware.BroAvaliacao.Controladores.DTO;
+package com.LFSoftware.BroAvaliacao.Controladores.DTO.request;
 
 import java.time.LocalTime;
 

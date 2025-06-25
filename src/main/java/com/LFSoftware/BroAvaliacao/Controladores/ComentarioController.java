@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ComentarioDTO;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ComentarioResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ComentarioDTO;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ComentarioResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

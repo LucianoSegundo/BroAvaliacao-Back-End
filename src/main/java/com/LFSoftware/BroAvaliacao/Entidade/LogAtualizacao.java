@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LogResponse;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ModificacoesResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LogResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ModificacoesResponse;
 import com.LFSoftware.BroAvaliacao.Controladores.Exception.ErroGeracaoRetorno;
 
 import jakarta.persistence.CascadeType;

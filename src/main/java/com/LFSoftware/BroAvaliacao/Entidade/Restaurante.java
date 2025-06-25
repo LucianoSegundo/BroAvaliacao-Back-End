@@ -4,7 +4,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.RestauranteResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.RestauranteResponse;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

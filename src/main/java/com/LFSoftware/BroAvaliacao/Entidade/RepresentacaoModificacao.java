@@ -1,6 +1,6 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ModificacoesResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ModificacoesResponse;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

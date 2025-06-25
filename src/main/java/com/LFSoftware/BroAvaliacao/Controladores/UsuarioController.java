@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.CadastroRequest;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginRequest;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.CadastroRequest;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.LoginRequest;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LoginResponse;
 import com.LFSoftware.BroAvaliacao.Servicos.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;

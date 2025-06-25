@@ -1,10 +1,10 @@
 package com.LFSoftware.BroAvaliacao.Controladores;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ItemDTO;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.ItemResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ItemDTO;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ItemResponse;
+import com.LFSoftware.BroAvaliacao.Servicos.ItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +27,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequestMapping(value = "api/v1/restaurante/{restauID}/item")
 public class ItemController {
 
+	@Autowired
+	private ItemService service;
+	
+	public ItemController() {
+		
+	}
 
 	@Operation(summary = "criar item", description = "Forneça o nome e a descrição do item, caso o restaurante tenha um proprietario, só ele pode adicionar itens.")
 	@ApiResponse(responseCode = "200", description = "criação bem sucedido")
@@ -42,7 +49,6 @@ public class ItemController {
 	@ApiResponse(responseCode = "200", description = "Exclusão bem sucedida")
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante ao qual o item está vinculado, então não pode exclui-lo.")
 	@ApiResponse(responseCode = "404", description = "Restaurante, proprietário ou item não encontrados")
-	@PreAuthorize("hasAuthority('SCOPE_proprietario')")
 	@DeleteMapping(value = "/deletar/{itemID}")
 	public ResponseEntity<Void> deletar(JwtAuthenticationToken token , @PathVariable Long restauID, @PathVariable Long itemID ){
 		
@@ -54,7 +60,6 @@ public class ItemController {
 	@ApiResponse(responseCode = "200", description = "Ocultação bem sucedida")
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante ao qual o item está vinculado, então não pode oculta-lo.")
 	@ApiResponse(responseCode = "404", description = "Restaurante, proprietário ou item não encontrados")
-	@PreAuthorize("hasAuthority('SCOPE_proprietario')")
 	@PutMapping(value = "/ocultar/{itemID}")
 	public ResponseEntity<Void> ocultar(JwtAuthenticationToken token, @PathVariable Long restauID, @PathVariable Long itemID){
 		

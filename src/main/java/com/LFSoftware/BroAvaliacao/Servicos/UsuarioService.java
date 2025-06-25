@@ -10,9 +10,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.CadastroRequest;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginRequest;
-import com.LFSoftware.BroAvaliacao.Controladores.DTO.LoginResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.CadastroRequest;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.LoginRequest;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LoginResponse;
 import com.LFSoftware.BroAvaliacao.Entidade.Configuracao;
 import com.LFSoftware.BroAvaliacao.Entidade.Papel;
 import com.LFSoftware.BroAvaliacao.Entidade.Usuario;
