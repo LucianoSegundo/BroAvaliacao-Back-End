@@ -70,24 +70,61 @@ classDiagram
         String mensagem
         String local
     }
+    
+           %% ENUM TipoAtualizacao
+    class TipoAtualizacao {
+        int categoria
+        String descricao
+    }
+
+    %% Classe LogAtualizacao
+    class LogAtualizacao {
+        Long id
+        String nomeItem
+        int categoriaAtualizacao
+        String justificativaAlualizacao
+        LocalDateTime dataCriacao
+    }
+
+ %% Classe RepresentacaoModificacao
+    class RepresentacaoModificacao {
+        Long id
+        String valorOriginal
+        String nomeAtributo
+        String novoValor
+    }
 
     %% Relacionamentos
     Usuario "1" --> "many" Resenha : escreve
     Usuario "1" --> "1" Configuracao : possui
     Usuario "1" --> "many" Notificacao : recebe
     Usuario "1" --> "many" Comentario : escreve
+    Usuario "1" --> "many" LogAtualizacao : responsavel pela geração de
+    
     Resenha "1" --> "1" Usuario : autor
     Resenha "1" --> "1" Restaurante : refere-se
     Resenha "1" --> "1" Item : refere-se
     Resenha "1" --> "many" Comentario : possui
+    
     Item "1" --> "many" Resenha : é avaliado por
     Item "1" --> "1" Restaurante : pertence a
+    Item "1" --> "many" LogAtualizacao : É referenciado por
+    
     Restaurante "1" --> "many" Item : possui
     Restaurante "1" --> "many" Resenha : é avaliado por
     Restaurante "1" --> "1" Endereco : localizado em
     Restaurante "1" --> "1" Usuario : proprietario
+    Restaurante "1" --> "many" LogAtualizacao : É referenciado por
+    
     Endereco "1" --> "1" Restaurante : pertence a
     Comentario "1" --> "many" Comentario : respostas
     Notificacao "1" --> "1" Usuario : destinatário
+    
+    LogAtualizacao "1" --> "1" Usuario : Foi gerado por
+    LogAtualizacao "1" --> "0..1" Restaurante : Faz referencia a
+    LogAtualizacao "1" --> "0..1" Item :  Faz referencia a
+    LogAtualizacao "1" --> "many" RepresentacaoModificacao : Contem uma lista de
+    
+    RepresentacaoModificacao "1" --> "1" LogAtualizacao : armazena as alterações de
 
 ```
