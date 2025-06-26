@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ItemAlteradoDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ItemDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ItemResponse;
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LogResponse;
 import com.LFSoftware.BroAvaliacao.Servicos.ItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
@@ -39,10 +42,11 @@ public class ItemController {
 	@ApiResponse(responseCode = "422", description = "criação negada devido a dados em branco.")
 	@ApiResponse(responseCode = "404", description = "proprietario ou restaurante não encontrados.")
 	@PostMapping(value = "/criar")
-	public ResponseEntity<ItemResponse> criar(JwtAuthenticationToken token, @RequestBody ItemDTO dto, @PathVariable Long restauID){
-		
-		
-		return null;
+	public ResponseEntity<ItemResponse> criar(JwtAuthenticationToken token, @RequestBody ItemDTO dadosRequeridos, @PathVariable Long restauID){
+
+		ItemResponse resposta = service.criar( restauID, dadosRequeridos,Long.parseLong(token.getName()));
+
+		return ResponseEntity.ok(resposta);
 	}
 	
 	@Operation(summary = "Deletar um item", description = "Exclui um item, metodo restrito a usuarios com o role proprietário, e só é permitida a exclusão caso o usuário seja o proprietário do restaurante a qual o item pertence.")
@@ -50,10 +54,12 @@ public class ItemController {
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante ao qual o item está vinculado, então não pode exclui-lo.")
 	@ApiResponse(responseCode = "404", description = "Restaurante, proprietário ou item não encontrados")
 	@DeleteMapping(value = "/deletar/{itemID}")
-	public ResponseEntity<Void> deletar(JwtAuthenticationToken token , @PathVariable Long restauID, @PathVariable Long itemID ){
-		
-		
-		return null;
+	public ResponseEntity<Void> deletar(JwtAuthenticationToken token , @PathVariable Long restauID, Long itemID, 
+			@RequestBody @Schema(type = "string", example = "texto justificando a ação tomada.") String justificativa) {
+
+		service.deletar(itemID, restauID, justificativa, Long.parseLong(token.getName()));
+
+		return ResponseEntity.ok().build();
 	}
 	
 	@Operation(summary = "ocultar um item", description = "Ocultar um item, metodo restrito a usuarios com o role proprietário, e só é permitida a ocultação caso o usuário seja o proprietário do restaurante a qual o item pertence.")
@@ -72,10 +78,12 @@ public class ItemController {
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante, então não pode editar suas informações.")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
 	@PutMapping(value = "/editar")
-	public ResponseEntity<ItemResponse> editar(JwtAuthenticationToken token, @PathVariable Long restauID,@PathVariable Long itemID, @RequestBody ItemDTO dto){
+	public ResponseEntity<ItemResponse> editar(JwtAuthenticationToken token, @PathVariable Long restauID,@PathVariable Long itemID, @RequestBody ItemAlteradoDTO dadosRequeridos){
 		
-		
-		return null;
+
+		ItemResponse resposta = service.editar(itemID, restauID, dadosRequeridos, Long.parseLong(token.getName()));
+		return ResponseEntity.ok(resposta);
+
 	}
 	
 	@Operation(summary = "Listar itens", description = "Retorna uma lista paginada de itens de um restaurante.")
@@ -91,9 +99,24 @@ public class ItemController {
 			JwtAuthenticationToken token){
 		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
-		
-		return null;
+		Page<ItemResponse> resposta = service.listar(restauID, request);
+		return ResponseEntity.ok(resposta);
 	}
 	
+	@Operation(summary = "Listar restaurantes", description = "Retorna uma lista paginada de restaurantes.")
+	@ApiResponse(responseCode = "200", description = "operação bem sucedida")
+	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
+	@GetMapping(value = "/{itemID}/log")
+	public ResponseEntity<Page<LogResponse>> listarLog(
+			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
+			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas,
+			@RequestParam(value = "ordarPor", defaultValue = "dataCriacao") String ordarPor,
+			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem, JwtAuthenticationToken token,
+			@PathVariable Long itemID) {
+		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
+
+		Page<LogResponse> resposta = service.retornarLogitem(itemID, request);
+		return ResponseEntity.ok(resposta);
+	}
 	
 }

@@ -55,7 +55,7 @@ public class RestauranteController {
 
 		service.deletar(restauID, Long.parseLong(token.getName()), justificativa);
 
-		return null;
+		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "Editar informações de um restaurante", description = "Edita informações de um restaurante, caso o restaurante tenha um proprietário só ele podera editar as informações do restaurante.")

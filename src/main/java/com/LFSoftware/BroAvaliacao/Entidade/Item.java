@@ -2,6 +2,8 @@ package com.LFSoftware.BroAvaliacao.Entidade;
 
 import java.util.List;
 
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ItemResponse;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ public class Item {
 
     private String nome;
     private String descricao;
+    private Boolean delecaoLogica;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Resenha> resenhas;
@@ -81,6 +84,19 @@ public class Item {
 
 	public void setHistoricoInteracoes(List<LogAtualizacao> historicoInteracoes) {
 		this.historicoInteracoes = historicoInteracoes;
+	}
+
+	public ItemResponse toResponse() {
+		
+		return new ItemResponse(this.id, this.nome, this.descricao);
+	}
+
+	public Boolean getDelecaoLogica() {
+		return delecaoLogica;
+	}
+
+	public void setDelecaoLogica(Boolean delecaoLogica) {
+		this.delecaoLogica = delecaoLogica;
 	}
     
     
