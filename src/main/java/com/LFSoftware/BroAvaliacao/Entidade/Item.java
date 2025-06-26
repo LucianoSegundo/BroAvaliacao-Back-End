@@ -1,5 +1,6 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ItemResponse;
@@ -16,26 +17,33 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Item {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String nome;
-    private String descricao;
-    private Boolean delecaoLogica;
+	private String nome;
+	private String descricao;
+	private Boolean delecaoLogica;
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<Resenha> resenhas;
+	@ManyToOne
+	@JoinColumn(name = "restaurante_id")
+	private Restaurante restaurante;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurante_id")
-    private Restaurante restaurante;
+	@OneToMany(mappedBy = "localItem", cascade = CascadeType.PERSIST)
+	private List<LogAtualizacao> historicoInteracoes;
 
-    @OneToMany(mappedBy = "localItem", cascade = CascadeType.PERSIST)
-	private List<LogAtualizacao> historicoInteracoes; 
-	
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<Resenha> resenhas;
+
 	public Item() {
 		super();
+		this.historicoInteracoes = new ArrayList<LogAtualizacao>();
+		this.delecaoLogica = false;
+	}
+
+	public ItemResponse toResponse() {
+
+		return new ItemResponse(this.id, this.nome, this.descricao);
 	}
 
 	public Long getId() {
@@ -86,11 +94,6 @@ public class Item {
 		this.historicoInteracoes = historicoInteracoes;
 	}
 
-	public ItemResponse toResponse() {
-		
-		return new ItemResponse(this.id, this.nome, this.descricao);
-	}
-
 	public Boolean getDelecaoLogica() {
 		return delecaoLogica;
 	}
@@ -98,7 +101,5 @@ public class Item {
 	public void setDelecaoLogica(Boolean delecaoLogica) {
 		this.delecaoLogica = delecaoLogica;
 	}
-    
-    
-}
 
+}

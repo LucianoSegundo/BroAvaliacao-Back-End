@@ -16,6 +16,7 @@ import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.RestauranteRespons
 import com.LFSoftware.BroAvaliacao.Entidade.LogAtualizacao;
 import com.LFSoftware.BroAvaliacao.Entidade.RepresentacaoModificacao;
 import com.LFSoftware.BroAvaliacao.Entidade.Restaurante;
+import com.LFSoftware.BroAvaliacao.Entidade.TipoAtualizacao;
 import com.LFSoftware.BroAvaliacao.Entidade.Usuario;
 import com.LFSoftware.BroAvaliacao.Excecoes.AcessoNegadoException;
 import com.LFSoftware.BroAvaliacao.Excecoes.AusendiaDadosException;
@@ -54,7 +55,7 @@ public class RestauranteService {
 		restaurante.setAbertura(dadosRequeridos.Abertura());
 		restaurante.setFechamento(dadosRequeridos.fechamento());
 
-		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 1l);
+		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, TipoAtualizacao.criacaoR);
 
 		usuario.getHistoricoInteracoes().add(log);
 		restaurante.getHistoricoInteracoes().add(log);
@@ -65,7 +66,6 @@ public class RestauranteService {
 	@Transactional
 	public void deletar(Long restauID, long usuarioID, String justificativa) {
 
-		
 		if (justificativa == null || justificativa.isBlank())
 			throw new AcessoNegadoException("justificativa para a exclusão não pode ser nula.");
 
@@ -83,7 +83,7 @@ public class RestauranteService {
 		// persistencia das alterações.
 		restaurante.setDelecaoLogica(true);
 
-		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 3l, justificativa);
+		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, TipoAtualizacao.delecao, justificativa);
 
 		usuario.getHistoricoInteracoes().add(log);
 		restaurante.getHistoricoInteracoes().add(log);
@@ -93,7 +93,7 @@ public class RestauranteService {
 	}
 
 	@Transactional
-	public RestauranteResponse editar(Long restauID, long usuarioID, RestauranteAlteradoDTO dadosRequeridos ) {
+	public RestauranteResponse editar(Long restauID, long usuarioID, RestauranteAlteradoDTO dadosRequeridos) {
 
 		if (dadosRequeridos.justificativa() == null || dadosRequeridos.justificativa().isBlank())
 			throw new AcessoNegadoException("justificativa para a edição não pode ser nula.");
@@ -149,7 +149,8 @@ public class RestauranteService {
 		Usuario usuario = usuarioRepo.findById(usuarioID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
 
-		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, 4l, dadosRequeridos.justificativa());
+		LogAtualizacao log = new LogAtualizacao(usuario, restaurante, TipoAtualizacao.edicao,
+				dadosRequeridos.justificativa());
 
 		modificacoes.forEach(x -> x.setLogVinculado(log));
 		log.setListaModificacoes(modificacoes);

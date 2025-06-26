@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LogResponse;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ModificacoesResponse;
-import com.LFSoftware.BroAvaliacao.Controladores.Exception.ErroGeracaoRetorno;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -37,24 +36,26 @@ public class LogAtualizacao {
 	@OneToMany(mappedBy = "logVinculado", cascade = CascadeType.ALL)
 	private List<RepresentacaoModificacao> ListaModificacoes;
 
-	private Long categoriaAtualizacao;
+	private int categoriaAtualizacao;
 
 	private String justificativaAlualizacao;
 
 	private LocalDateTime dataCriacao;
+	
+	private String nomeItem; // variavel que existe para atender alguns formatos de log;
 
 	// private Long posicao; // atributo suspenso devido posibilidade de remoção
 
 	public LogAtualizacao() {
 	}
 
-	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, Long categoria) {
+	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, TipoAtualizacao categoria) {
 		this.localRestaurante = localRestaurante;
 
 		inicializar(autor, categoria);
 	}
 
-	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, Long categoria,
+	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, TipoAtualizacao categoria,
 			String justificativaAlualizacao) {
 		this.localRestaurante = localRestaurante;
 		this.justificativaAlualizacao = justificativaAlualizacao;
@@ -62,75 +63,40 @@ public class LogAtualizacao {
 		inicializar(autor, categoria);
 	}
 
-	public LogAtualizacao(Usuario autor, Item localItem, Long categoria) {
+	public LogAtualizacao(Usuario autor, Restaurante localRestaurante, String nomeItem, TipoAtualizacao categoria) {
+		this.localRestaurante = localRestaurante;
+		this.nomeItem = nomeItem;
+
+		inicializar(autor, categoria);
+	}
+
+	public LogAtualizacao(Usuario autor, Item localItem, TipoAtualizacao categoria) {
 		this.localItem = localItem;
 
 		inicializar(autor, categoria);
 	}
 
-	public LogAtualizacao(Usuario autor, Item localItem, Long categoria, String justificativaAlualizacao) {
+	public LogAtualizacao(Usuario autor, Item localItem, TipoAtualizacao categoria, String justificativaAlualizacao) {
 		this.localItem = localItem;
 		this.justificativaAlualizacao = justificativaAlualizacao;
 
 		inicializar(autor, categoria);
 	}
 
-	private void inicializar(Usuario autor, Long categoria) {
+	private void inicializar(Usuario autor, TipoAtualizacao categoria) {
 		this.autor = autor;
 		this.dataCriacao = LocalDateTime.now();
 
-		if (categoria > 4 || categoria < 1)
-			throw new ErroGeracaoRetorno("Tipo de atualização não reconhecido.");
-		this.categoriaAtualizacao = categoria;
+		this.categoriaAtualizacao = categoria.getCategoria();
 	}
 
 	public String gerarMensagem() {
 
-		String mensagem = "";
-
-		if (categoriaAtualizacao > 4 || categoriaAtualizacao < 1)
-			throw new ErroGeracaoRetorno("Falha ao montar o Log, tipode atualização não encontrado");
-
-		if (localRestaurante != null) {
-
-			mensagem = "O Restaurante ";
-			mensagem += localRestaurante.getNome();
-
-			if (categoriaAtualizacao == 1)
-				mensagem += TipoAtualizacao.criacaoR.getTipo();
-			else if (categoriaAtualizacao == 2)
-				mensagem += TipoAtualizacao.atualizacao.getTipo();
-			else if (categoriaAtualizacao == 3)
-				mensagem += TipoAtualizacao.delecao.getTipo();
-			else if (categoriaAtualizacao == 4)
-				mensagem = "Os dados do Restaurante " + localRestaurante.getNome() + " "
-						+ TipoAtualizacao.edicao.getTipo();
-
-		} else if (localItem != null) {
-
-			mensagem = "O Item ";
-			mensagem += localItem.getNome();
-
-			if (categoriaAtualizacao == 1)
-				mensagem += TipoAtualizacao.criacaoR.getTipo();
-			else if (categoriaAtualizacao == 2)
-				mensagem += TipoAtualizacao.atualizacao.getTipo();
-			else if (categoriaAtualizacao == 3)
-				mensagem += TipoAtualizacao.delecao.getTipo();
-			else if (categoriaAtualizacao == 4)
-				mensagem = "Os dados do Item" + TipoAtualizacao.edicao.getTipo();
-
-		} else
-			throw new ErroGeracaoRetorno("Falha ao montar o Log de Atualização");
-
-		mensagem += autor.getUsuario() + " ";
-		mensagem += TipoAtualizacao.data.getTipo() + " " + formatarData() + " ";
-		mensagem += TipoAtualizacao.horario.getTipo() + " " + formatarhora() + ".";
-
+		String mensagem = TipoAtualizacao.getTipo(categoriaAtualizacao).montarMensagem(this);
 		return mensagem;
 	}
 
-	private String formatarData() {
+	protected String formatarData() {
 
 		String rettorno = "";
 		DateTimeFormatter formatador;
@@ -145,7 +111,7 @@ public class LogAtualizacao {
 		return rettorno;
 	}
 
-	private String formatarhora() {
+	protected String formatarhora() {
 
 		DateTimeFormatter formatador;
 
@@ -225,11 +191,11 @@ public class LogAtualizacao {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public Long getCategoriaAtualizacao() {
+	public int getCategoriaAtualizacao() {
 		return categoriaAtualizacao;
 	}
 
-	public void setCategoriaAtualizacao(Long categoriaAtualizacao) {
+	public void setCategoriaAtualizacao(int categoriaAtualizacao) {
 		this.categoriaAtualizacao = categoriaAtualizacao;
 	}
 
@@ -247,6 +213,14 @@ public class LogAtualizacao {
 
 	public void setJustificativaAlualizacao(String justificativaAlualizacao) {
 		this.justificativaAlualizacao = justificativaAlualizacao;
+	}
+
+	public String getNomeItem() {
+		return nomeItem;
+	}
+
+	public void setNomeItem(String nomeItem) {
+		this.nomeItem = nomeItem;
 	}
 
 //	public Long getPosicao() {

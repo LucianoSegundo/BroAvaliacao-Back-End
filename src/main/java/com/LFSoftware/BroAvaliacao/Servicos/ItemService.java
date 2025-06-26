@@ -17,6 +17,7 @@ import com.LFSoftware.BroAvaliacao.Entidade.Item;
 import com.LFSoftware.BroAvaliacao.Entidade.LogAtualizacao;
 import com.LFSoftware.BroAvaliacao.Entidade.RepresentacaoModificacao;
 import com.LFSoftware.BroAvaliacao.Entidade.Restaurante;
+import com.LFSoftware.BroAvaliacao.Entidade.TipoAtualizacao;
 import com.LFSoftware.BroAvaliacao.Entidade.Usuario;
 import com.LFSoftware.BroAvaliacao.Excecoes.AcessoNegadoException;
 import com.LFSoftware.BroAvaliacao.Excecoes.AusendiaDadosException;
@@ -59,11 +60,14 @@ public class ItemService {
 		entidade.setNome(dadosRequeridos.nome());
 		entidade.setDescricao(dadosRequeridos.descrição());
 
-		LogAtualizacao log = new LogAtualizacao(usuario, entidade, 1l);
+		LogAtualizacao log = new LogAtualizacao(usuario, entidade, TipoAtualizacao.criacaoR);
+		LogAtualizacao log2 = new LogAtualizacao(usuario, restaurante, entidade.getNome(),
+				TipoAtualizacao.adicionarItem);
 
 		restaurante.getCardapio().add(entidade);
 		usuario.getHistoricoInteracoes().add(log);
 		entidade.getHistoricoInteracoes().add(log);
+		restaurante.getHistoricoInteracoes().add(log2);
 
 		return repositorio.save(entidade).toResponse();
 	}
@@ -75,10 +79,7 @@ public class ItemService {
 			throw new AcessoNegadoException("justificativa para a exclusão não pode ser nula.");
 
 		// resgatando as entidades envolvidas;
-
-		Usuario usuario = usuarioRepo.findById(usuarioID)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
-		Item entidade = repositorio.findById(restauID)
+		Item entidade = repositorio.findById(itemID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Item não encontrado."));
 
 		if (entidade.getDelecaoLogica() == true)
@@ -88,15 +89,20 @@ public class ItemService {
 			throw new AcessoNegadoException(
 					"Item não pertence ao restaurante referenciado na requisição, devido a divergencia para prevenir erros a exclusão foi negada.");
 
+		Usuario usuario = usuarioRepo.findById(usuarioID)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
+
 		// definindo logicamente a exclusão do item como verdadeira e fazendo a
 		// persistencia das alterações.
 
 		entidade.setDelecaoLogica(true);
 
-		LogAtualizacao log = new LogAtualizacao(usuario, entidade, 3l, justificativa);
+		LogAtualizacao log = new LogAtualizacao(usuario, entidade, TipoAtualizacao.delecao, justificativa);
+		LogAtualizacao log2 = new LogAtualizacao(usuario, entidade.getRestaurante(), entidade.getNome(), TipoAtualizacao.removerItem);
 
 		usuario.getHistoricoInteracoes().add(log);
 		entidade.getHistoricoInteracoes().add(log);
+		entidade.getRestaurante().getHistoricoInteracoes().add(log2);
 
 		repositorio.save(entidade);
 
@@ -152,7 +158,8 @@ public class ItemService {
 		Usuario usuario = usuarioRepo.findById(usuarioID)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario não encontrado."));
 
-		LogAtualizacao log = new LogAtualizacao(usuario, entidade, 4l, dadosRequeridos.justificativa());
+		LogAtualizacao log = new LogAtualizacao(usuario, entidade, TipoAtualizacao.edicao,
+				dadosRequeridos.justificativa());
 
 		log.setListaModificacoes(modificacoes);
 		usuario.getHistoricoInteracoes().add(log);

@@ -32,9 +32,9 @@ public class ItemController {
 
 	@Autowired
 	private ItemService service;
-	
+
 	public ItemController() {
-		
+
 	}
 
 	@Operation(summary = "criar item", description = "Forneça o nome e a descrição do item, caso o restaurante tenha um proprietario, só ele pode adicionar itens.")
@@ -42,67 +42,56 @@ public class ItemController {
 	@ApiResponse(responseCode = "422", description = "criação negada devido a dados em branco.")
 	@ApiResponse(responseCode = "404", description = "proprietario ou restaurante não encontrados.")
 	@PostMapping(value = "/criar")
-	public ResponseEntity<ItemResponse> criar(JwtAuthenticationToken token, @RequestBody ItemDTO dadosRequeridos, @PathVariable Long restauID){
+	public ResponseEntity<ItemResponse> criar(JwtAuthenticationToken token, @RequestBody ItemDTO dadosRequeridos,
+			@PathVariable Long restauID) {
 
-		ItemResponse resposta = service.criar( restauID, dadosRequeridos,Long.parseLong(token.getName()));
+		ItemResponse resposta = service.criar(restauID, dadosRequeridos, Long.parseLong(token.getName()));
 
 		return ResponseEntity.ok(resposta);
 	}
-	
+
 	@Operation(summary = "Deletar um item", description = "Exclui um item, metodo restrito a usuarios com o role proprietário, e só é permitida a exclusão caso o usuário seja o proprietário do restaurante a qual o item pertence.")
 	@ApiResponse(responseCode = "200", description = "Exclusão bem sucedida")
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante ao qual o item está vinculado, então não pode exclui-lo.")
 	@ApiResponse(responseCode = "404", description = "Restaurante, proprietário ou item não encontrados")
 	@DeleteMapping(value = "/deletar/{itemID}")
-	public ResponseEntity<Void> deletar(JwtAuthenticationToken token , @PathVariable Long restauID, Long itemID, 
+	public ResponseEntity<Void> deletar(JwtAuthenticationToken token, @PathVariable Long restauID,
+			@PathVariable Long itemID,
 			@RequestBody @Schema(type = "string", example = "texto justificando a ação tomada.") String justificativa) {
 
 		service.deletar(itemID, restauID, justificativa, Long.parseLong(token.getName()));
 
 		return ResponseEntity.ok().build();
 	}
-	
-	@Operation(summary = "ocultar um item", description = "Ocultar um item, metodo restrito a usuarios com o role proprietário, e só é permitida a ocultação caso o usuário seja o proprietário do restaurante a qual o item pertence.")
-	@ApiResponse(responseCode = "200", description = "Ocultação bem sucedida")
-	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante ao qual o item está vinculado, então não pode oculta-lo.")
-	@ApiResponse(responseCode = "404", description = "Restaurante, proprietário ou item não encontrados")
-	@PutMapping(value = "/ocultar/{itemID}")
-	public ResponseEntity<Void> ocultar(JwtAuthenticationToken token, @PathVariable Long restauID, @PathVariable Long itemID){
-		
-		
-		return null;
-	}
-	
+
 	@Operation(summary = "Editar informações de um Item", description = "Edita informações de um Item, caso o restaurante tenha um proprietário só ele podera editar as informações dos itens vinculados aos restaurante.")
 	@ApiResponse(responseCode = "200", description = "Edição bem sucedida")
 	@ApiResponse(responseCode = "402", description = "Usuario não é o proprietário do restaurante, então não pode editar suas informações.")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
-	@PutMapping(value = "/editar")
-	public ResponseEntity<ItemResponse> editar(JwtAuthenticationToken token, @PathVariable Long restauID,@PathVariable Long itemID, @RequestBody ItemAlteradoDTO dadosRequeridos){
-		
+	@PutMapping(value = "/editar/{itemID}")
+	public ResponseEntity<ItemResponse> editar(JwtAuthenticationToken token, @PathVariable Long restauID,
+			@PathVariable Long itemID, @RequestBody ItemAlteradoDTO dadosRequeridos) {
 
 		ItemResponse resposta = service.editar(itemID, restauID, dadosRequeridos, Long.parseLong(token.getName()));
 		return ResponseEntity.ok(resposta);
 
 	}
-	
+
 	@Operation(summary = "Listar itens", description = "Retorna uma lista paginada de itens de um restaurante.")
 	@ApiResponse(responseCode = "200", description = "operação bem sucedida")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
 	@GetMapping(value = "/listar")
-	public ResponseEntity<Page<ItemResponse>> listar(
-			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
+	public ResponseEntity<Page<ItemResponse>> listar(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas,
 			@RequestParam(value = "ordarPor", defaultValue = "nome") String ordarPor,
-			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem,
-			@PathVariable Long restauID,
-			JwtAuthenticationToken token){
+			@RequestParam(value = "ordem", defaultValue = "ASC") String ordem, @PathVariable Long restauID,
+			JwtAuthenticationToken token) {
 		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
 		Page<ItemResponse> resposta = service.listar(restauID, request);
 		return ResponseEntity.ok(resposta);
 	}
-	
+
 	@Operation(summary = "Listar restaurantes", description = "Retorna uma lista paginada de restaurantes.")
 	@ApiResponse(responseCode = "200", description = "operação bem sucedida")
 	@ApiResponse(responseCode = "404", description = "Restaurante ou proprietário não encontrados")
@@ -118,5 +107,5 @@ public class ItemController {
 		Page<LogResponse> resposta = service.retornarLogitem(itemID, request);
 		return ResponseEntity.ok(resposta);
 	}
-	
+
 }
