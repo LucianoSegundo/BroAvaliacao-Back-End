@@ -1,6 +1,7 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
 import com.LFSoftware.BroAvaliacao.Controladores.Exception.ErroGeracaoRetorno;
+import com.LFSoftware.BroAvaliacao.Servicos.FormTempo;
 
 public enum TipoAtualizacao {
 
@@ -51,8 +52,8 @@ public enum TipoAtualizacao {
 		} else
 			throw new ErroGeracaoRetorno("Falha ao montar o Log de Atualização");
 
-		String mensagem = prefacil + " " + nome + descricao + autor + " as " + goL.formatarhora()
-				+ " do dia " + goL.formatarData() + ".";
+		String mensagem = prefacil + " " + nome + descricao + autor + " as " + FormTempo.formatarhora(goL.getDataCriacao())
+				+ " do dia " + FormTempo.formatarData(goL.getDataCriacao()) + ".";
 
 		return mensagem;
 	}

@@ -1,9 +1,7 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.LogResponse;
@@ -23,6 +21,14 @@ public class LogAtualizacao {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	private String nomeItem; // variavel que existe para atender alguns formatos de log;
+	
+	private int categoriaAtualizacao;
+	
+	private String justificativaAlualizacao;
+	
+	private LocalDateTime dataCriacao;
 
 	@ManyToOne
 	private Usuario autor;
@@ -35,15 +41,7 @@ public class LogAtualizacao {
 
 	@OneToMany(mappedBy = "logVinculado", cascade = CascadeType.ALL)
 	private List<RepresentacaoModificacao> ListaModificacoes;
-
-	private int categoriaAtualizacao;
-
-	private String justificativaAlualizacao;
-
-	private LocalDateTime dataCriacao;
 	
-	private String nomeItem; // variavel que existe para atender alguns formatos de log;
-
 	// private Long posicao; // atributo suspenso devido posibilidade de remoção
 
 	public LogAtualizacao() {
@@ -96,30 +94,7 @@ public class LogAtualizacao {
 		return mensagem;
 	}
 
-	protected String formatarData() {
-
-		String rettorno = "";
-		DateTimeFormatter formatador;
-
-		formatador = DateTimeFormatter.ofPattern("d MMMM", new Locale("pt", "BR"));
-		rettorno = dataCriacao.format(formatador);
-
-		if (dataCriacao.getYear() != LocalDateTime.now().getYear()) {
-			rettorno += " de " + dataCriacao.getYear();
-		}
-
-		return rettorno;
-	}
-
-	protected String formatarhora() {
-
-		DateTimeFormatter formatador;
-
-		formatador = DateTimeFormatter.ofPattern("hh:mm", new Locale("pt", "BR"));
-		return dataCriacao.format(formatador);
-
-	}
-
+	
 //	@Transactional(readOnly = true)
 //	private void definirPosisao( Long idAlvo, LogRepository repo) {
 //		// Objetivo desse metodo é criar uma ordenação entre as diferentes categorias de log para um certo alvo, por exemplo definir que este é a quarta vez que o item foi modificado.

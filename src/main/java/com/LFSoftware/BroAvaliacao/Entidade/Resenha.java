@@ -1,8 +1,11 @@
 package com.LFSoftware.BroAvaliacao.Entidade;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ResenhaResponse;
+import com.LFSoftware.BroAvaliacao.Excecoes.AcessoNegadoException;
+import com.LFSoftware.BroAvaliacao.Servicos.FormTempo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -13,36 +16,52 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
-
-
 @Entity
 public class Resenha {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String titulo;
-    private String conteudo;
-    private LocalDateTime criacao;
+	private String titulo;
+	private String conteudo;
+	private LocalDateTime dataCriacao;
 
-    @ManyToOne
-    @JoinColumn(name = "autor_id")
-    private Usuario autor;
+	@ManyToOne
+	@JoinColumn(name = "autor_id")
+	private Usuario autor;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurante_id")
-    private Restaurante restaurante;
+	@ManyToOne
+	@JoinColumn(name = "restaurante_id")
+	private Restaurante restaurante;
 
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
+	@ManyToOne
+	@JoinColumn(name = "item_id")
+	private Item item;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Comentario> comentarios;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Comentario> comentarios;
 
 	public Resenha() {
 		super();
+		this.dataCriacao = LocalDateTime.now();
+	}
+
+	public ResenhaResponse toResponse() {
+		String alvo = "";
+		Boolean isRestaurante = false;
+		String dataa = FormTempo.formatarData(dataCriacao);
+
+		if (restaurante != null) {
+			isRestaurante = true;
+			alvo = this.restaurante.getNome();
+		} else if (item != null) {
+			isRestaurante = false;
+			alvo = this.item.getNome();
+		} else
+			throw new AcessoNegadoException("Algo deu errado, resenha apontando para nada.");
+
+		return new ResenhaResponse(id, titulo, conteudo, autor.getUsuario(), alvo, dataa, isRestaurante);
 	}
 
 	public Long getId() {
@@ -102,13 +121,11 @@ public class Resenha {
 	}
 
 	public LocalDateTime getCriacao() {
-		return criacao;
+		return dataCriacao;
 	}
 
 	public void setCriacao(LocalDateTime criacao) {
-		this.criacao = criacao;
+		this.dataCriacao = criacao;
 	}
-    
-    
-}
 
+}
