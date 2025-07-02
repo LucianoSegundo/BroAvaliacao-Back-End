@@ -39,7 +39,7 @@ public class Resenha {
 	@JoinColumn(name = "item_id")
 	private Item item;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "resenha")
 	private List<Comentario> comentarios;
 
 	public Resenha() {

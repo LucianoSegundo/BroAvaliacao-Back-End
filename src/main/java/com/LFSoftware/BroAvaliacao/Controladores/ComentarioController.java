@@ -1,5 +1,6 @@
 package com.LFSoftware.BroAvaliacao.Controladores;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ComentarioDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.response.ComentarioResponse;
+import com.LFSoftware.BroAvaliacao.Servicos.ComentarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,6 +26,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RequestMapping(value = "api/v1/comentario")
 public class ComentarioController {
 
+	@Autowired
+	private ComentarioService service;
+	
+	public ComentarioController() {}
 	@Operation(summary = "comentar resenha ", description = "cria um comentario em uma resenha.")
 	@ApiResponse(responseCode = "200", description = "criação bem sucedido")
 	@ApiResponse(responseCode = "422", description = "criação negada devido a dados em branco.")
@@ -31,8 +37,8 @@ public class ComentarioController {
 	@PostMapping(value = "/comentar/resenha/{resenhaID}")
 	public ResponseEntity< ComentarioResponse> escreverComentarioResenha(JwtAuthenticationToken token, @RequestBody ComentarioDTO dto, @PathVariable Long resenhaID){
 		
-		
-		return null;
+		ComentarioResponse response = service.comentarResenha(resenhaID, dto,  Long.parseLong(token.getName()));
+		return ResponseEntity.ok(response);
 	}
 	
 	@Operation(summary = "comentar comentario ", description = "cria um comentario em uma comentario.")
@@ -42,8 +48,8 @@ public class ComentarioController {
 	@PostMapping(value = "/comentar/comentario/{comentarioID}")
 	public ResponseEntity<ComentarioResponse> escreverComentarioEmComentario(JwtAuthenticationToken token, @RequestBody ComentarioDTO dto, @PathVariable Long comentarioID){
 		
-		
-		return null;
+		ComentarioResponse response = service.comentarComentario(comentarioID, dto,  Long.parseLong(token.getName()));
+		return ResponseEntity.ok(response);
 	}
 	
 	
@@ -53,9 +59,9 @@ public class ComentarioController {
 	@ApiResponse(responseCode = "404", description = "usuario ou comentario não encontrados")
 	@PutMapping(value = "/excluir/{comentarioID}")
 	public ResponseEntity<Void> excluir(JwtAuthenticationToken token, @PathVariable Long comentarioID){
+		service.excluir(comentarioID,Long.parseLong(token.getName()));
 		
-		
-		return null;
+		return ResponseEntity.ok().build();
 	}
 	
 	@Operation(summary = "Editar informações de um comentario", description = "Edita informações de um comentario, Só é permitido caso o usuario seja aquele que escreveu a comentario.")
@@ -65,8 +71,9 @@ public class ComentarioController {
 	@PutMapping(value = "/editar/{comentarioID}")
 	public ResponseEntity<ComentarioResponse> editar(JwtAuthenticationToken token ,@RequestBody ComentarioDTO dto, @PathVariable Long comentarioID){
 		
+		ComentarioResponse response = service.editar(comentarioID,dto,Long.parseLong(token.getName()));
 		
-		return null;
+		return ResponseEntity.ok(response);
 	}
 	
 	
@@ -83,8 +90,8 @@ public class ComentarioController {
 			JwtAuthenticationToken token){
 		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
-		
-		return null;
+		Page<ComentarioResponse> response = service.comentariosResenha(resenhaID, request);
+		return ResponseEntity.ok(response);
 	}	
 
 	@Operation(summary = "Listar comentarios de um comentario", description = "Retorna uma lista paginada de comentarios de um comentario")
@@ -100,8 +107,8 @@ public class ComentarioController {
 			JwtAuthenticationToken token){
 		PageRequest request = PageRequest.of(pagina, linhas, Direction.valueOf(ordem), ordarPor);
 
-		
-		return null;
+		Page<ComentarioResponse> response = service.comentariosComentario(comentarioID, request);
+		return ResponseEntity.ok(response);
 	}
 
 }

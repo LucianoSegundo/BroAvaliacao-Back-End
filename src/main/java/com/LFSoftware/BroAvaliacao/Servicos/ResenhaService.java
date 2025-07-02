@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ReferenciaResenhaDTO;
 import com.LFSoftware.BroAvaliacao.Controladores.DTO.request.ResenhaDTO;
@@ -36,6 +37,7 @@ public class ResenhaService {
 
 	}
 
+	@Transactional()
 	public ResenhaResponse resenharRestaurante(Long restauID, ResenhaDTO dadosRequeridos, long userID) {
 
 		Resenha entidade = criarResenha(userID, dadosRequeridos);
@@ -48,7 +50,8 @@ public class ResenhaService {
 
 		return persistirResenha(entidade);
 	}
-
+	
+	@Transactional()
 	public ResenhaResponse resenharItem(Long itemID, ResenhaDTO dadosRequeridos, long userID) {
 
 		Resenha entidade = criarResenha(userID, dadosRequeridos);
@@ -62,6 +65,7 @@ public class ResenhaService {
 		return persistirResenha(entidade);
 	}
 
+	@Transactional(readOnly = true)
 	public Resenha criarResenha(Long userID, ResenhaDTO dadosRequeridos) {
 		if (dadosRequeridos.conteudo() == null || dadosRequeridos.conteudo().isBlank())
 			throw new AusendiaDadosException("O conteudo da postagem não pode ser nulo.");
@@ -76,21 +80,25 @@ public class ResenhaService {
 		entidade.setTitulo(dadosRequeridos.titulo());
 		entidade.setConteudo(dadosRequeridos.conteudo());
 		entidade.setAutor(usuario);
+		usuario.getResenhas().add(entidade);
 
 		return entidade;
 	}
 
+	@Transactional()
 	public ResenhaResponse persistirResenha(Resenha resenha) {
 
 		return repositorio.save(resenha).toResponse();
 	}
 
+	@Transactional()
 	public void deletar(Long resenhaID, long userID) {
 		Resenha resenha = validarAutoria(resenhaID, userID,  "exclui-la");
 
 		repositorio.deleteById(resenha.getId());
 	};
-
+	
+	@Transactional()
 	public ReferenciaResenhaDTO retornarReferencia(Long resenhaID) {
 
 		Resenha resenha = repositorio.findById(resenhaID)
@@ -111,7 +119,7 @@ public class ResenhaService {
 
 		return referencia;
 	}
-
+	@Transactional()
 	public Resenha validarAutoria(Long resenhaID, long userID, String operacao) {
 
 		Resenha resenha = repositorio.findById(resenhaID)
@@ -126,7 +134,7 @@ public class ResenhaService {
 		return resenha;
 	};
 
-	
+	@Transactional()
 	public ResenhaResponse editar(Long resenhaID, ResenhaDTO dadosRequeridos, long userID) {
 		
 		Boolean editado = false;
@@ -155,23 +163,25 @@ public class ResenhaService {
 		return resenha.toResponse();
 	}
 
-	
+	@Transactional(readOnly = true)
 	public Page<ResenhaResponse> retornarTodo(PageRequest request) {
 		// TODO Auto-generated method stub
 		return repositorio.findAll(request).map(x -> x.toResponse());
 	}
 
-	
+	@Transactional(readOnly = true)
 	public Page<ResenhaResponse> retornardeAlguem(PageRequest request, long usuarioID) {
 		Page<Resenha>  response = repositorio.findAllByAutor_Id(usuarioID, request);
 		return response.map(x-> x.toResponse());
 	}
 
+	@Transactional(readOnly = true)
 	public Page<ResenhaResponse> retornardeItem(PageRequest request, Long itemID) {
 		Page<Resenha>  response = repositorio.findAllByItem_Id(itemID, request);
 		return response.map(x-> x.toResponse());
 	}
 
+	@Transactional(readOnly = true)
 	public Page<ResenhaResponse> retornardeRestaurante(PageRequest request, Long restauID) {
 		Page<Resenha>  response = repositorio.findAllByRestaurante_Id(restauID, request);
 		return response.map(x-> x.toResponse());

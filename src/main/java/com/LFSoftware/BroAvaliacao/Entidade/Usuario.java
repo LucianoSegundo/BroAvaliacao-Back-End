@@ -35,7 +35,7 @@ public class Usuario {
     @OneToMany(mappedBy = "destinatario", cascade = CascadeType.ALL)
     private List<Notificacao> notificacoes;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "autor")
     private List<Comentario> comentarios;
     
     @OneToMany(mappedBy = "autor", cascade = CascadeType.PERSIST)
